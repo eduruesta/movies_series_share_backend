@@ -23,14 +23,14 @@ class CriticsRepositoryImpl(private val mongoDatabase: MongoDatabase) : CriticsR
     
     override suspend fun findById(id: Long): Critics? =
         mongoDatabase.getCollection(CRITICS_COLLECTION, Critics::class.java)
-            .find(eq("id", id))
+            .find(eq("_id", id))
             .firstOrNull()
     
     override suspend fun update(id: Long, critics: Critics): Critics? {
         val collection = mongoDatabase.getCollection(CRITICS_COLLECTION, Critics::class.java)
         val updatedCritics = critics.copy(id = id)
         val result = collection.replaceOne(
-            eq("id", id),
+            eq("_id", id),
             updatedCritics,
             ReplaceOptions().upsert(false)
         )
