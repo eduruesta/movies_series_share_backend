@@ -1,0 +1,367 @@
+openapi: "3.0.3"
+info:
+  title: "Maristapp API"
+  description: "Application API"
+  version: "1.0.0"
+servers:
+  - url: "http://0.0.0.0:8080"
+paths:
+  /news:
+    get:
+      summary: Retrieve all the news
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsRequest'
+        "404":
+          description: News not found
+
+  /news/{_id}:
+    get:
+      summary: Retrieve news record by ID
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example: { }
+        '404':
+          description: News not found
+
+  /team_information:
+    get:
+      summary: Retrieve all team information
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamInformation'
+        "404":
+          description: Team information not found
+
+  /kids_team_information:
+    get:
+      summary: Retrieve all kids team information
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamInformation'
+        "404":
+          description: Kids Team information not found
+
+  /hockey_team_information:
+    get:
+      summary: Retrieve all hockey team information
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HockeyTeamInformation'
+        "404":
+          description: Hockey Team information not found
+
+  /last_matches:
+    get:
+      summary: Retrieve all rugby last matches results
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RugbyLastMatches'
+        "404":
+          description: Rugby results not found
+
+  /kids_last_matches:
+    get:
+      summary: Retrieve all kids rugby last matches results
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RugbyLastMatches'
+        "404":
+          description: Rugby results not found
+
+  /hockey_last_matches:
+    get:
+      summary: Retrieve all hockey last matches results
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LastMatches'
+        "404":
+          description: Hockey results not found
+
+  /hockey_next_matches:
+    get:
+      summary: Retrieve all hockey next matches results
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NextMatches'
+        "404":
+          description: Hockey results not found
+
+  /next_matches:
+    get:
+      summary: Retrieve all rugby next matches results
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NextMatches'
+        "404":
+          description: Rugby results not found
+
+  /kids_next_matches:
+    get:
+      summary: Retrieve all kids rugby next matches results
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NextMatches'
+        "404":
+          description: Rugby results not found
+
+components:
+  schemas:
+    News:
+      type: object
+      properties:
+        _id:
+          type: string
+        category:
+          type: string
+        content:
+          type: string
+        date:
+          type: integer
+          format: int64
+        subtitle:
+          type: string
+        thumbnail:
+          type: string
+        title:
+          type: string
+        isActive:
+          type: boolean
+        link:
+          type: string
+        linkTitle:
+          type: string
+      required:
+        - _id
+        - category
+        - content
+        - date
+        - subtitle
+        - thumbnail
+        - title
+
+    NewsRequest:
+      type: object
+      properties:
+        _id:
+          type: string
+        category:
+          type: string
+        content:
+          type: string
+        date:
+          type: integer
+          format: int64
+        subtitle:
+          type: string
+        thumbnail:
+          type: string
+        title:
+          type: string
+      required:
+        - _id
+        - category
+        - content
+        - date
+        - subtitle
+        - thumbnail
+        - title
+
+    TeamInformation:
+      type: object
+      properties:
+        _id:
+          type: string
+        Equipo:
+          type: string
+        Logo:
+          type: string
+        E:
+          type: string
+        P:
+          type: string
+        PTS:
+          type: string
+        G:
+          type: string
+        Categoria:
+          type: string
+        Rang:
+          type: integer
+          format: int32
+      required:
+        - _id
+        - Equipo
+        - Logo
+        - E
+        - P
+        - PTS
+        - G
+        - Categoria
+        - Rang
+
+    HockeyTeamInformation:
+      type: object
+      properties:
+        _id:
+          type: string
+        Club:
+          type: string
+        Logo:
+          type: string
+        PE:
+          type: string
+        PP:
+          type: string
+        Pts:
+          type: string
+        PG:
+          type: string
+        categoria:
+          type: string
+        Pos:
+          type: string
+      required:
+        - _id
+
+    LastMatches:
+      type: object
+      properties:
+        _id:
+          type: string
+        category:
+          type: string
+        date:
+          type: string
+        day:
+          type: string
+        local_team:
+          $ref: '#/components/schemas/LocalTeam'
+        nro_fecha:
+          type: integer
+        visiting_team:
+          $ref: '#/components/schemas/VisitingTeam'
+      required:
+        - _id
+        - category
+        - date
+        - day
+        - local_team
+        - visiting_team
+
+    NextMatches:
+      type: object
+      properties:
+        _id:
+          type: string
+        category:
+          type: string
+        date:
+          type: string
+        day:
+          type: string
+        local_team:
+          $ref: '#/components/schemas/LocalTeam'
+        nro_fecha:
+          type: integer
+        visiting_team:
+          $ref: '#/components/schemas/VisitingTeam'
+      required:
+        - _id
+        - date
+        - day
+        - local_team
+        - visiting_team
+
+    LocalTeam:
+      type: object
+      properties:
+        logo:
+          type: string
+        name:
+          type: string
+        result:
+          type: string
+      required:
+        - logo
+        - name
+
+    VisitingTeam:
+      type: object
+      properties:
+        logo:
+          type: string
+        name:
+          type: string
+        result:
+          type: string
+      required:
+        - logo
+        - name
