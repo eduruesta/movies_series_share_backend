@@ -32,5 +32,40 @@ fun Route.critics() {
                 )
             }
         }
+        
+        get("/{id}") {
+            try {
+                val id = call.parameters["id"]?.toLongOrNull()
+                    ?: return@get call.respond(HttpStatusCode.BadRequest, mapOf("error" to "ID inválido"))
+                
+                val critic = criticsRepository.findById(id)
+                    ?: return@get call.respond(HttpStatusCode.NotFound, mapOf("error" to "Crítica no encontrada"))
+                
+                call.respond(critic.toResponse())
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to (e.message ?: "Error desconocido al buscar la crítica"))
+                )
+            }
+        }
+        
+        put("/{id}") {
+            try {
+                val id = call.parameters["id"]?.toLongOrNull()
+                    ?: return@put call.respond(HttpStatusCode.BadRequest, mapOf("error" to "ID inválido"))
+                
+                val request = call.receive<Critics>()
+                val updatedCritic = criticsRepository.update(id, request)
+                    ?: return@put call.respond(HttpStatusCode.NotFound, mapOf("error" to "Crítica no encontrada"))
+                
+                call.respond(updatedCritic.toResponse())
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to (e.message ?: "Error desconocido al actualizar la crítica"))
+                )
+            }
+        }
     }
 }
