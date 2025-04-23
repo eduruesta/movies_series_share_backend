@@ -135,6 +135,10 @@ components:
           type: string
           nullable: true
           description: URL del póster
+        backdropUrl:
+          type: string
+          nullable: true
+          description: URL del backdrop
         ratingCount:
           type: integer
           description: Número de calificaciones
@@ -176,6 +180,9 @@ components:
         synopsis:
           type: string
         posterUrl:
+          type: string
+          nullable: true
+        backdropUrl:
           type: string
           nullable: true
         ratingCount:

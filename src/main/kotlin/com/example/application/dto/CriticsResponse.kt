@@ -16,8 +16,10 @@ data class CriticsResponse(
     val synopsis: String,
     val posterUrl: String?,
     val ratingCount: Int,
-    val averageRating: Float
-)
+    val averageRating: Float,
+    val backdropUrl: String?,
+
+    )
 
 fun Critics.toResponse(): CriticsResponse {
     return CriticsResponse(
@@ -34,6 +36,7 @@ fun Critics.toResponse(): CriticsResponse {
         synopsis = synopsis,
         posterUrl = posterUrl,
         ratingCount = ratingCount,
-        averageRating = averageRating
+        averageRating = averageRating,
+        backdropUrl = backdropUrl
     )
 }
