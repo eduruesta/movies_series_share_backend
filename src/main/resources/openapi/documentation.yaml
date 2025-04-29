@@ -107,9 +107,11 @@ components:
           type: number
           format: float
           description: Calificación (0-5)
-        comment:
-          type: string
-          description: Comentario o crítica
+        comments:
+          type: array
+          items:
+            type: string
+          description: Lista de comentarios o críticas
         imageUrl:
           type: string
           description: URL de la imagen
@@ -149,7 +151,7 @@ components:
       required:
         - title
         - rating
-        - comment
+        - comments
         - genre
         
     CriticsResponse:
@@ -163,8 +165,10 @@ components:
         rating:
           type: number
           format: float
-        comment:
-          type: string
+        comments:
+          type: array
+          items:
+            type: string
         imageUrl:
           type: string
         genre:
@@ -194,5 +198,5 @@ components:
         - id
         - title
         - rating
-        - comment
+        - comments
         - genre
