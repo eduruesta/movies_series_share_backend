@@ -19,4 +19,5 @@ data class Critics(
     val ratingCount: Int = 1,
     val averageRating: Float = 0f,
     val backdropUrl: String? = null,
-    )
+    val groupId: String? = null, // ID del grupo al que pertenece esta crítica (opcional)
+)

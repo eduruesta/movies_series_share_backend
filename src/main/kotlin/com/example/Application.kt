@@ -1,8 +1,14 @@
-package com.mongodb
+package com.example
 
 import com.example.application.routes.critics
+import com.example.application.routes.groups
+import com.example.application.routes.groupCritics
 import com.example.domain.port.CriticsRepository
+import com.example.domain.port.GroupRepository
 import com.example.infrastructure.repository.CriticsRepositoryImpl
+import com.example.infrastructure.repository.GroupRepositoryImpl
+import com.mongodb.ConnectionString
+import com.mongodb.MongoClientSettings
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.ktor.serialization.gson.gson
 import io.ktor.server.application.Application
@@ -55,6 +61,7 @@ fun Application.module() {
             }
         }, module {
             single<CriticsRepository> { CriticsRepositoryImpl(get()) }
+            single<GroupRepository> { GroupRepositoryImpl(get()) }
         })
     }
     routing {
@@ -62,5 +69,7 @@ fun Application.module() {
             version = "4.15.5"
         }
         critics()
+        groups()
+        groupCritics()
     }
 }

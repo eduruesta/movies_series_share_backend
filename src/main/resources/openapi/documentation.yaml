@@ -92,6 +92,144 @@ paths:
         "500":
           description: Error interno del servidor
 
+  /groups:
+    get:
+      summary: Obtener todos los grupos
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupResponse'
+        "500":
+          description: Error interno del servidor
+    
+    post:
+      summary: Crear un nuevo grupo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+      responses:
+        "201":
+          description: "Grupo creado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        "400":
+          description: Error en la solicitud
+  
+  /groups/{id}:
+    get:
+      summary: Obtener un grupo por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        "400":
+          description: ID inválido
+        "404":
+          description: Grupo no encontrado
+        "500":
+          description: Error interno del servidor
+  
+  /groups/join/{inviteCode}:
+    post:
+      summary: Unirse a un grupo mediante código de invitación
+      parameters:
+        - name: inviteCode
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinGroupRequest'
+      responses:
+        "200":
+          description: "Se unió al grupo exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        "400":
+          description: Código de invitación inválido
+        "404":
+          description: Grupo no encontrado
+        "500":
+          description: Error interno del servidor
+
+  /groups/{groupId}/critics:
+    get:
+      summary: Obtener todas las críticas de un grupo específico
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CriticsResponse'
+        "400":
+          description: ID de grupo inválido
+        "404":
+          description: Grupo no encontrado
+        "500":
+          description: Error interno del servidor
+    
+    post:
+      summary: Crear una nueva crítica dentro de un grupo
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Critics'
+      responses:
+        "201":
+          description: "Crítica creada en el grupo"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CriticsResponse'
+        "400":
+          description: Error en la solicitud o ID de grupo inválido
+        "404":
+          description: Grupo no encontrado
+        "500":
+          description: Error interno del servidor
+
 components:
   schemas:
     Critics:
@@ -148,6 +286,10 @@ components:
           type: number
           format: float
           description: Calificación promedio
+        groupId:
+          type: string
+          nullable: true
+          description: ID del grupo al que pertenece esta crítica (opcional)
       required:
         - title
         - rating
@@ -194,9 +336,67 @@ components:
         averageRating:
           type: number
           format: float
+        groupId:
+          type: string
+          nullable: true
+          description: ID del grupo al que pertenece esta crítica (opcional)
       required:
         - id
         - title
         - rating
         - comments
         - genre
+        
+    GroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre del grupo
+        description:
+          type: string
+          description: Descripción del grupo
+        createdBy:
+          type: string
+          description: Nombre o identificador del creador del grupo
+      required:
+        - name
+        - createdBy
+    
+    GroupResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        createdBy:
+          type: string
+        createdAt:
+          type: integer
+          format: int64
+        members:
+          type: array
+          items:
+            type: string
+        memberCount:
+          type: integer
+        inviteCode:
+          type: string
+      required:
+        - id
+        - name
+        - createdBy
+        - members
+        - inviteCode
+    
+    JoinGroupRequest:
+      type: object
+      properties:
+        memberName:
+          type: string
+          description: Nombre o identificador del miembro que se une al grupo
+      required:
+        - memberName
