@@ -8,7 +8,7 @@ data class GroupResponse(
     val description: String,
     val createdBy: String,
     val createdAt: Long,
-    val members: List<String>,
+    val members: List<UserResponse>,
     val memberCount: Int,
     val inviteCode: String
 )
@@ -20,7 +20,7 @@ fun Group.toResponse(): GroupResponse {
         description = description,
         createdBy = createdBy,
         createdAt = createdAt,
-        members = members,
+        members = members.map { it.toResponse() },
         memberCount = members.size,
         inviteCode = inviteCode
     )

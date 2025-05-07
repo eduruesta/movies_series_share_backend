@@ -4,6 +4,7 @@ import com.example.application.dto.GroupRequest
 import com.example.application.dto.JoinGroupRequest
 import com.example.application.dto.toResponse
 import com.example.domain.entity.Group
+import com.example.domain.entity.User
 import com.example.domain.port.GroupRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -36,11 +37,18 @@ fun Route.groups() {
             try {
                 val request = call.receive<GroupRequest>()
                 
+                // Crear un objeto User para el creador
+                val creator = User(
+                    id = request.createdBy,
+                    name = request.creatorName,
+                    email = request.creatorEmail
+                )
+                
                 val group = Group(
                     name = request.name,
                     description = request.description,
                     createdBy = request.createdBy,
-                    members = listOf(request.createdBy) // El creador es el primer miembro
+                    members = listOf(creator)
                 )
                 
                 val savedGroup = groupRepository.save(group)
@@ -70,6 +78,23 @@ fun Route.groups() {
             }
         }
 
+        get("/by-member/{memberId}") {
+            try {
+                val memberId = call.parameters["memberId"]
+                    ?: return@get call.respond(HttpStatusCode.BadRequest, mapOf("error" to "ID de miembro inválido"))
+                
+                val groups = groupRepository.findGroupsByMemberId(memberId)
+                val response = groups.map { it.toResponse() }
+                
+                call.respond(response)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to (e.message ?: "Error desconocido al buscar grupos por miembro"))
+                )
+            }
+        }
+
         post("/join/{inviteCode}") {
             try {
                 val inviteCode = call.parameters["inviteCode"]
@@ -80,7 +105,14 @@ fun Route.groups() {
                 val group = groupRepository.findByInviteCode(inviteCode)
                     ?: return@post call.respond(HttpStatusCode.NotFound, mapOf("error" to "Grupo no encontrado"))
                 
-                val updatedGroup = groupRepository.addMember(group.id, request.memberName)
+                // Crear objeto User para el nuevo miembro
+                val newMember = User(
+                    id = request.userId,
+                    name = request.userName,
+                    email = request.userEmail
+                )
+                
+                val updatedGroup = groupRepository.addMember(group.id, newMember)
                     ?: return@post call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Error al unirse al grupo"))
                 
                 call.respond(updatedGroup.toResponse())

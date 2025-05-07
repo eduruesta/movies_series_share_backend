@@ -10,7 +10,7 @@ data class Group(
     val description: String = "",
     val createdBy: String = "",
     val createdAt: Long = System.currentTimeMillis(),
-    val members: List<String> = emptyList(),
+    val members: List<User> = emptyList(),
     val inviteCode: String = generateRandomCode()
 )
 

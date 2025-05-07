@@ -1,5 +1,7 @@
 package com.example.application.dto
 
 data class JoinGroupRequest(
-    val memberName: String
+    val userId: String,
+    val userName: String,
+    val userEmail: String
 )

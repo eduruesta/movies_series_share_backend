@@ -1,6 +1,7 @@
 package com.example.infrastructure.repository
 
 import com.example.domain.entity.Group
+import com.example.domain.entity.User
 import com.example.domain.port.GroupRepository
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.ReplaceOptions
@@ -53,20 +54,25 @@ class GroupRepositoryImpl(private val mongoDatabase: MongoDatabase) : GroupRepos
         return result.deletedCount > 0
     }
 
-    override suspend fun addMember(groupId: String, memberName: String): Group? {
+    override suspend fun addMember(groupId: String, user: User): Group? {
         val group = findById(groupId) ?: return null
         
-        // Verificar si el miembro ya está en el grupo
-        if (memberName in group.members) {
+        // Verificar si el usuario ya está en el grupo
+        if (group.members.any { it.id == user.id }) {
             return group
         }
         
-        // Añadir el miembro a la lista
-        val updatedMembers = group.members + memberName
+        // Añadir el usuario a la lista de miembros
+        val updatedMembers = group.members + user
         val updatedGroup = group.copy(members = updatedMembers)
         
         return update(groupId, updatedGroup)
     }
+    
+    override suspend fun findGroupsByMemberId(memberId: String): List<Group> =
+        mongoDatabase.getCollection(GROUPS_COLLECTION, Group::class.java)
+            .find(eq("members.id", memberId))
+            .toList()
 
     companion object {
         const val GROUPS_COLLECTION = "groups"

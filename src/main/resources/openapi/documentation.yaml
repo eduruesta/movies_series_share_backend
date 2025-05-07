@@ -148,6 +148,30 @@ paths:
         "500":
           description: Error interno del servidor
   
+  /groups/by-member/{memberId}:
+    get:
+      summary: Obtener todos los grupos donde un usuario es miembro
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del usuario miembro
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupResponse'
+        "400":
+          description: ID de miembro inválido
+        "500":
+          description: Error interno del servidor
+  
   /groups/join/{inviteCode}:
     post:
       summary: Unirse a un grupo mediante código de invitación
@@ -346,6 +370,40 @@ components:
         - rating
         - comments
         - genre
+    
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID único del usuario
+        name:
+          type: string
+          description: Nombre del usuario
+        email:
+          type: string
+          description: Correo electrónico del usuario
+      required:
+        - id
+        - name
+        - email
+    
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID único del usuario
+        name:
+          type: string
+          description: Nombre del usuario
+        email:
+          type: string
+          description: Correo electrónico del usuario
+      required:
+        - id
+        - name
+        - email
         
     GroupRequest:
       type: object
@@ -358,10 +416,18 @@ components:
           description: Descripción del grupo
         createdBy:
           type: string
-          description: Nombre o identificador del creador del grupo
+          description: ID del creador del grupo
+        creatorName:
+          type: string
+          description: Nombre del creador del grupo
+        creatorEmail:
+          type: string
+          description: Correo electrónico del creador del grupo
       required:
         - name
         - createdBy
+        - creatorName
+        - creatorEmail
     
     GroupResponse:
       type: object
@@ -380,7 +446,8 @@ components:
         members:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/UserResponse'
+          description: Lista de miembros del grupo con información completa
         memberCount:
           type: integer
         inviteCode:
@@ -395,8 +462,16 @@ components:
     JoinGroupRequest:
       type: object
       properties:
-        memberName:
+        userId:
           type: string
-          description: Nombre o identificador del miembro que se une al grupo
+          description: ID del usuario que se une al grupo
+        userName:
+          type: string
+          description: Nombre del usuario que se une al grupo
+        userEmail:
+          type: string
+          description: Correo electrónico del usuario que se une al grupo
       required:
-        - memberName
+        - userId
+        - userName
+        - userEmail
