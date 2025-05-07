@@ -71,7 +71,7 @@ class GroupRepositoryImpl(private val mongoDatabase: MongoDatabase) : GroupRepos
     
     override suspend fun findGroupsByMemberId(memberId: String): List<Group> =
         mongoDatabase.getCollection(GROUPS_COLLECTION, Group::class.java)
-            .find(eq("members.id", memberId))
+            .find(eq("members._id", memberId))
             .toList()
 
     companion object {
