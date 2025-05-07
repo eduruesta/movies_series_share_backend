@@ -74,6 +74,37 @@ class GroupRepositoryImpl(private val mongoDatabase: MongoDatabase) : GroupRepos
             .find(eq("members._id", memberId))
             .toList()
 
+    override suspend fun removeMember(groupId: String, userId: String): Group? {
+        val group = findById(groupId) ?: return null
+        
+        // Verificar si el usuario está en el grupo
+        if (group.members.none { it.id == userId }) {
+            return group
+        }
+        
+        if (group.createdBy == userId) {
+            val otherMembers = group.members.filter { it.id != userId }
+            
+            if (otherMembers.isEmpty()) {
+                delete(groupId)
+                return null
+            }
+            
+            val newOwner = otherMembers.first()
+            val updatedGroup = group.copy(
+                members = otherMembers,
+                createdBy = newOwner.id
+            )
+            
+            return update(groupId, updatedGroup)
+        } else {
+            val updatedMembers = group.members.filter { it.id != userId }
+            val updatedGroup = group.copy(members = updatedMembers)
+            
+            return update(groupId, updatedGroup)
+        }
+    }
+
     companion object {
         const val GROUPS_COLLECTION = "groups"
     }

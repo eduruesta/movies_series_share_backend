@@ -11,5 +11,6 @@ interface GroupRepository {
     suspend fun update(id: String, group: Group): Group?
     suspend fun delete(id: String): Boolean
     suspend fun addMember(groupId: String, user: User): Group?
+    suspend fun removeMember(groupId: String, userId: String): Group?
     suspend fun findGroupsByMemberId(memberId: String): List<Group>
 }

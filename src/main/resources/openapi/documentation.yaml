@@ -147,6 +147,39 @@ paths:
           description: Grupo no encontrado
         "500":
           description: Error interno del servidor
+
+    delete:
+      summary: Eliminar un grupo (solo el creador puede hacerlo)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID del usuario que intenta eliminar el grupo
+      responses:
+        "200":
+          description: "Grupo eliminado correctamente"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: ID inválido o ID de usuario no proporcionado
+        "403":
+          description: El usuario no es el creador del grupo
+        "404":
+          description: Grupo no encontrado
+        "500":
+          description: Error interno del servidor
   
   /groups/by-member/{memberId}:
     get:
@@ -201,6 +234,51 @@ paths:
         "500":
           description: Error interno del servidor
 
+  /groups/{groupId}/leave:
+    delete:
+      summary: Salir de un grupo (cualquier miembro, incluido el creador)
+      description: |
+        Permite a cualquier miembro salir del grupo. Si el que sale es el creador:
+        - Si quedan otros miembros, la propiedad se transfiere al siguiente miembro
+        - Si era el último miembro, el grupo se elimina automáticamente
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID del usuario que desea salir del grupo
+      responses:
+        "200":
+          description: "Usuario salió del grupo exitosamente"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Mensaje informativo sobre el resultado de la operación
+                      group:
+                        $ref: '#/components/schemas/GroupResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Mensaje informando que el grupo fue eliminado (cuando el creador era el último miembro)
+        "400":
+          description: ID inválido, ID de usuario no proporcionado, o el usuario no es miembro del grupo
+        "404":
+          description: Grupo no encontrado
+        "500":
+          description: Error interno del servidor
+  
   /groups/{groupId}/critics:
     get:
       summary: Obtener todas las críticas de un grupo específico
