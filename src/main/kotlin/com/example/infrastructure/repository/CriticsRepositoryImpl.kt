@@ -3,6 +3,7 @@ package com.example.infrastructure.repository
 import com.example.domain.entity.Critics
 import com.example.domain.port.CriticsRepository
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.`in`
 import com.mongodb.client.model.ReplaceOptions
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import kotlinx.coroutines.flow.firstOrNull
@@ -40,6 +41,14 @@ class CriticsRepositoryImpl(private val mongoDatabase: MongoDatabase) : CriticsR
         } else {
             null
         }
+    }
+    
+    override suspend fun findByGroupIds(groupIds: List<String>): List<Critics> {
+        if (groupIds.isEmpty()) return emptyList()
+        
+        return mongoDatabase.getCollection(CRITICS_COLLECTION, Critics::class.java)
+            .find(`in`("groupId", groupIds))
+            .toList()
     }
 
     companion object {

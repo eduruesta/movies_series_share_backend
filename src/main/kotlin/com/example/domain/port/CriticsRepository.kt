@@ -7,4 +7,5 @@ interface CriticsRepository {
     suspend fun save(critics: Critics): Critics
     suspend fun findById(id: Long): Critics?
     suspend fun update(id: Long, critics: Critics): Critics?
+    suspend fun findByGroupIds(groupIds: List<String>): List<Critics>
 }

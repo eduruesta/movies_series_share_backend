@@ -5,6 +5,7 @@ import com.example.application.dto.JoinGroupRequest
 import com.example.application.dto.toResponse
 import com.example.domain.entity.Group
 import com.example.domain.entity.User
+import com.example.domain.port.CriticsRepository
 import com.example.domain.port.GroupRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -19,6 +20,7 @@ import org.koin.ktor.ext.inject
 
 fun Route.groups() {
     val groupRepository: GroupRepository by inject()
+    val criticsRepository: CriticsRepository by inject()
 
     route("/groups") {
         get {
@@ -217,6 +219,31 @@ fun Route.groups() {
                 call.respond(
                     HttpStatusCode.InternalServerError,
                     mapOf("error" to (e.message ?: "Error desconocido al salir del grupo"))
+                )
+            }
+        }
+
+        get("/member/{memberId}/critics") {
+            try {
+                val memberId = call.parameters["memberId"]
+                    ?: return@get call.respond(HttpStatusCode.BadRequest, mapOf("error" to "ID de miembro inválido"))
+                
+                val userGroups = groupRepository.findGroupsByMemberId(memberId)
+                
+                if (userGroups.isEmpty()) {
+                    return@get call.respond(emptyList<Any>())
+                }
+                
+                val groupIds = userGroups.map { it.id }
+                
+                val groupCritics = criticsRepository.findByGroupIds(groupIds)
+                
+                val response = groupCritics.map { it.toResponse() }
+                call.respond(response)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to (e.message ?: "Error desconocido al obtener las críticas de los grupos"))
                 )
             }
         }
