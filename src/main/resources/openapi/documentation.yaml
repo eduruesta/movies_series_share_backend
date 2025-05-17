@@ -417,6 +417,9 @@ components:
           type: string
           nullable: true
           description: ID del grupo al que pertenece esta crítica (opcional)
+        username:
+          type: string
+          description: Nombre de usuario de quien creó la opinión
       required:
         - title
         - rating
@@ -467,6 +470,9 @@ components:
           type: string
           nullable: true
           description: ID del grupo al que pertenece esta crítica (opcional)
+        username:
+          type: string
+          description: Nombre de usuario de quien creó la opinión
       required:
         - id
         - title

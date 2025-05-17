@@ -20,4 +20,5 @@ data class Critics(
     val averageRating: Float = 0f,
     val backdropUrl: String? = null,
     val groupId: String? = null, // ID del grupo al que pertenece esta crítica (opcional)
+    val username: String = "", // Username of the person who created the review
 )

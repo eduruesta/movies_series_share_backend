@@ -18,7 +18,8 @@ data class CriticsResponse(
     val ratingCount: Int,
     val averageRating: Float,
     val backdropUrl: String?,
-    val groupId: String?
+    val groupId: String?,
+    val username: String
 )
 
 fun Critics.toResponse(): CriticsResponse {
@@ -38,6 +39,7 @@ fun Critics.toResponse(): CriticsResponse {
         ratingCount = ratingCount,
         averageRating = averageRating,
         backdropUrl = backdropUrl,
-        groupId = groupId
+        groupId = groupId,
+        username = username
     )
 }
