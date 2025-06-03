@@ -247,5 +247,23 @@ fun Route.groups() {
                 )
             }
         }
+        
+        // Endpoint para obtener críticas por ID de grupo
+        get("/{groupId}/critics") {
+            try {
+                val groupId = call.parameters["groupId"]
+                    ?: return@get call.respond(HttpStatusCode.BadRequest, mapOf("error" to "ID de grupo inválido"))
+                
+                val critics = criticsRepository.findByGroupIds(listOf(groupId))
+                val response = critics.map { it.toResponse() }
+                
+                call.respond(response)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    mapOf("error" to (e.message ?: "Error desconocido al obtener críticas del grupo"))
+                )
+            }
+        }
     }
 }
