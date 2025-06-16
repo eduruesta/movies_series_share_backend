@@ -359,6 +359,19 @@ paths:
 
 components:
   schemas:
+    Comment:
+      type: object
+      properties:
+        text:
+          type: string
+          description: El texto del comentario
+        username:
+          type: string
+          description: Nombre de usuario de quien escribió el comentario
+      required:
+        - text
+        - username
+        
     Critics:
       type: object
       properties:
@@ -375,7 +388,7 @@ components:
         comments:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Comment'
           description: Lista de comentarios o críticas
         imageUrl:
           type: string
@@ -440,7 +453,7 @@ components:
         comments:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Comment'
         imageUrl:
           type: string
         genre:

@@ -7,7 +7,7 @@ data class Critics(
     val id: Long = 0,
     val title: String = "",
     val rating: Float = 0f,
-    val comments: List<String> = emptyList(),
+    val comments: List<Comment> = emptyList(),
     val imageUrl: String = "",
     val genre: String = "",
     val platform: String = "",
