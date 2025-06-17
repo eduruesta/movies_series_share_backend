@@ -5,6 +5,7 @@ import com.example.application.routes.groups
 import com.example.application.routes.groupCritics
 import com.example.domain.port.CriticsRepository
 import com.example.domain.port.GroupRepository
+import com.example.infrastructure.codec.CriticsCodecProvider
 import com.example.infrastructure.repository.CriticsRepositoryImpl
 import com.example.infrastructure.repository.GroupRepositoryImpl
 import com.mongodb.ConnectionString
@@ -18,6 +19,7 @@ import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.routing.routing
 import io.ktor.server.tomcat.jakarta.EngineMain
+import org.bson.codecs.configuration.CodecRegistries
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
@@ -43,6 +45,12 @@ fun Application.module() {
                 val uri = environment.config.propertyOrNull("ktor.mongo.uri")?.getString()
                     ?: throw RuntimeException("Failed to access MongoDB URI.")
 
+                // Registramos el codec personalizado para la entidad Critics
+                val codecRegistry = CodecRegistries.fromRegistries(
+                    CodecRegistries.fromProviders(CriticsCodecProvider()),
+                    MongoClientSettings.getDefaultCodecRegistry()
+                )
+                
                 val settings = MongoClientSettings.builder()
                     .applyConnectionString(ConnectionString(uri))
                     .applyToSslSettings { it.invalidHostNameAllowed(true) }
@@ -50,6 +58,7 @@ fun Application.module() {
                         socketSettings.connectTimeout(30000, TimeUnit.MILLISECONDS) // 30 segundos
                         socketSettings.readTimeout(30000, TimeUnit.MILLISECONDS) // 30 segundos
                     }
+                    .codecRegistry(codecRegistry)
                     .build()
 
                 MongoClient.create(settings)
