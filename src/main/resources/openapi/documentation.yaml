@@ -433,6 +433,9 @@ components:
         username:
           type: string
           description: Nombre de usuario de quien creó la opinión
+        mediaType:
+          type: string
+          description: Devuelve si es una movie o un tv show
       required:
         - title
         - rating

@@ -54,7 +54,9 @@ class CriticsCodec(private val registry: CodecRegistry) : Codec<Critics> {
         doc["backdropUrl"] = value.backdropUrl
         doc["groupId"] = value.groupId
         doc["username"] = value.username
-        
+        doc["mediaType"] = value.mediaType
+
+
         // Convertimos los comentarios al nuevo formato
         val commentsArray = ArrayList<Document>()
         value.comments.forEach { comment ->
@@ -122,7 +124,8 @@ class CriticsCodec(private val registry: CodecRegistry) : Codec<Critics> {
             averageRating = (document["averageRating"] as? Number)?.toFloat() ?: 0f,
             backdropUrl = document["backdropUrl"] as? String,
             groupId = document["groupId"] as? String,
-            username = document["username"] as? String ?: ""
+            username = document["username"] as? String ?: "",
+            mediaType = document["mediaType"] as? String ?: ""
         )
     }
 }
